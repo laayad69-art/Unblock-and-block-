@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>⥁ 𝑼𝒓 : 𝑭𝒂𝒗 𓆩 𝒁𝑴𝑨𝑿 𓆪</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent; /* إزالة التظليل عند الضغط */
+        }
+
+        html, body {
+            width: 100%;
+            min-height: 100vh;
+            background: linear-gradient(145deg, #1a0b00 0%, #4d1a00 70%, #1a0b00 100%);
+            direction: rtl;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        /* تأثير النار المتحركة - أخف عشان ما يشتتش */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 40%, rgba(255, 140, 0, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 60%, rgba(255, 69, 0, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ===== شاشة كلمة السر ===== */
+        .password-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.98);
+            backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 15px;
+            width: 100%;
+            height: 100%;
+        }
+
+        .password-container {
+            background: linear-gradient(145deg, #1f1000, #2a1500);
+            border: 3px solid #ff8c00;
+            border-radius: 50px;
+            padding: 30px 20px;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(255, 69, 0, 0.7);
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 30px rgba(255, 140, 0, 0.8); }
+            to { box-shadow: 0 0 60px rgba(255, 0, 0, 0.9); }
+        }
+
+        .lock-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 15px #ff4500);
+            animation: unlockShake 4s infinite;
+        }
+
+        @keyframes unlockShake {
+            0%, 100% { transform: rotate(0deg); }
+            2% { transform: rotate(8deg); }
+            4% { transform: rotate(-8deg); }
+            6% { transform: rotate(0deg); }
+        }
+
+        .password-title {
+            font-size: 26px;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ff4500;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 16px;
+            font-size: 28px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid #ff8c00;
+            border-radius: 60px;
+            color: #ffd700;
+            font-weight: bold;
+            letter-spacing: 8px;
+            margin-bottom: 20px;
+            outline: none;
+            direction: ltr;
+        }
+
+        .password-input:focus {
+            border-color: #ff4500;
+            box-shadow: 0 0 25px #ff8c00;
+        }
+
+        .password-btn {
+            background: linear-gradient(135deg, #ff4500, #ff8c00);
+            border: none;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            padding: 16px 30px;
+            border-radius: 60px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #b22222;
+            transition: all 0.1s ease;
+            border: 2px solid #ffd700;
+            width: 100%;
+        }
+
+        .password-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 0 0 #b22222;
+        }
+
+        .password-error {
+            color: #ff6b6b;
+            margin-top: 15px;
+            font-size: 18px;
+            text-shadow: 0 0 8px red;
+            display: none;
+            font-weight: bold;
+        }
+
+        /* ===== محتوى التطبيق الرئيسي ===== */
+        .main-content {
+            display: none;
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .app-name {
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ff4500;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px 10px;
+            border-radius: 50px;
+            border: 2px solid #ff8c00;
+            box-shadow: 0 0 20px rgba(255, 140, 0, 0.5);
+            backdrop-filter: blur(5px);
+            width: 100%;
+            margin: 5px auto 15px;
+            line-height: 1.4;
+        }
+
+        /* tabs التنقل */
+        .tabs-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .tab {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #ff8c00;
+            border-radius: 40px;
+            padding: 14px 5px;
+            text-align: center;
+            color: #ffd700;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: all 0.2s;
+            box-shadow: 0 3px 10px rgba(255, 69, 0, 0.3);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #ff4500, #ff8c00);
+            color: white;
+            border-color: #ffd700;
+            box-shadow: 0 0 20px #ff8c00;
+        }
+
+        .tab:active {
+            transform: scale(0.96);
+        }
+
+        /* الأقسام */
+        .section {
+            display: none;
+        }
+
+        .section.active-section {
+            display: block;
+        }
+
+        .section-card {
+            background: rgba(0, 0, 0, 0.85);
+            border: 2px solid #ff8c00;
+            border-radius: 35px;
+            padding: 18px 15px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 8px 20px rgba(255, 69, 0, 0.4);
+        }
+
+        .section-title {
+            font-size: 24px;
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 15px;
+            text-shadow: 0 0 8px #ff4500;
+            border-bottom: 2px solid #ff8c00;
+            padding-bottom: 8px;
+        }
+
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, #ff4500, #ff8c00);
+            border: none;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 16px 12px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #b22222;
+            transition: all 0.1s ease;
+            border: 2px solid #ffd700;
+            width: 100%;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .copy-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #b22222;
+        }
+
+        /* أزرار الحظر */
+        .block-btn {
+            background: linear-gradient(135deg, #8b0000, #b22222);
+            box-shadow: 0 4px 0 #4a0000;
+        }
+
+        .hidden-text {
+            display: none;
+        }
+
+        .message {
+            background: #2e7d32;
+            color: white;
+            padding: 10px;
+            border-radius: 40px;
+            text-align: center;
+            margin-top: 5px;
+            font-weight: bold;
+            font-size: 15px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            border: 2px solid #ffd700;
+        }
+
+        .message.show {
+            opacity: 1;
+        }
+
+        .btn-number {
+            background: #b22222;
+            color: #ffd700;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border: 2px solid #ffd700;
+            font-size: 16px;
+        }
+
+        .block-btn .btn-number {
+            background: #4a0000;
+        }
+
+        .footer-note {
+            text-align: center;
+            color: #ff8c00;
+            margin: 15px 0 5px;
+            font-size: 16px;
+            text-shadow: 0 0 8px red;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- شاشة كلمة السر -->
+    <div id="passwordScreen" class="password-screen">
+        <div class="password-container">
+            <div class="lock-icon">🔒🔥</div>
+            <div class="password-title">كلمة السر</div>
+            <input type="tel" id="passwordInput" class="password-input" placeholder="****" maxlength="4" inputmode="numeric" pattern="[0-9]*">
+            <button class="password-btn" onclick="checkPassword()">دخول</button>
+            <div id="passwordError" class="password-error">❌ غلط! حاول تاني</div>
+        </div>
+    </div>
+
+    <!-- محتوى التطبيق الرئيسي -->
+    <div id="mainContent" class="main-content">
+        
+        <!-- النصوص المخفية للنسخ - غيرها بالنصوص بتاعتك -->
+        <span id="unblockText1" class="hidden-text">جميلات الـ دعم 
+‏
+‏
+‏
+‏android@whatsapp.com,
+‏android_web@support.whatsapp.com,
+‏smb@support.whatsapp.com,
+‏android@support.whatsapp.com,
+‏support@whatsapp.com,
+‏accessibility@support.whatsapp.com,
+‏smb_web@support.whatsapp.com,
+‏smb-iphone@support.whatsapp.com,
+‏iphone@support.whatsapp.com,
+‏webclient_web@support.whatsapp.com,
+‏iphone_web@support.whatsapp.com,
+‏businesscomplaints@support.whatsapp.com,
+‏support@support.whatsapp.com,
+‏grievance_officer_wa@support.whatsapp.com, 
+‏
+‏الموضوع 📌
+‏
+‏यूएसए से एंड्रॉइड पर व्हाट्सएप बिजनेस के बारे में एक प्रश्न.
+‏
+‏
+‏الكود 
+‏
+‏Greetings to you, the great WhatsApp company, and with my sincere regards and greetings from all the employees of Pepsi Company. I am the owner of Pepsi Company and my name is Mr. Caleb Bradham from New Bern in the year 1876. I. United States of America and I am the only inventor of the drink, and Caleb Bradham is the inventor of Pepsi and the history of value and innovation on Wikidata 1893 131 years ago (as soft drink) 1898; 126 years ago (as Pepsi-Cola) 1961; 63 years ago (as Pepsi) Main Ingredients Drink Edit value on Wikidata - Edit source - Edit Wikidata About the bar It was originally created and developed in 1893 by pharmacist Caleb Bradham, who introduced it as bread drink, meaning bread drink, and then called it Pepsi. -Cola in 1898, then shortened to Pepsi in 1961. I have been a successful person for a long time, and my work in the state-owned Pepsi company was successful and I became the first successful person in the world. Pepsi is a soft drink, and all countries in the world use it. Our only wonderful drink is Pepsi, and I have problems that occurred through the WhatsApp application that I got from a customer in this country (Russia). Mr. Ledo, whose job is to find an automatic engine, contacted me via WhatsApp and was contracting with me from Russia, and the amount was $8,000,000. After he received $4,000,000, he would send the rest. The truck and workers were prepared and sent to Russia. I went to my personal WhatsApp application. When I opened my official WhatsApp to update the Russian Mr. Yandex by sending the remaining amount, my phone number was blocked, so I was wondering how my account is blocked if I am an important person in my country and my personal phone number is verified by the original WhatsApp company, and I have never violated the terms of service before I have been using WhatsApp since 2012 when the app crashed for the first time and I am the first person. An application to help Mr. Mark Zuckerberg in his project and for everyone to use. How can I disagree with the application that I advised many people to use when I know the reason why my account was blocked on WhatsApp because I have many conversations through it. Request So you have blocked my phone number, so please unblock so that I can get the last transaction amount and continue my work so that the company employees can fill all the Pepsi. Prepare me for the next deal, and I will donate a deal (half a billion dollars) equivalent to my support for lifting the ban immediately. So that I can continue my success, this is my account number, which the support team thanked (+2) for your many efforts. Thank you, Sir (FA3RS), for standing by WhatsApp, Pepsi and Coke.
+‏
+‏
+‏هتعلق الدعم لمدة 4 ساعات وهتبعتلهم ولو ردو عليك ب الطعن او الانتهاك هتبعتلهم الكود دي وباذن الله هيتفك معاك 
+‏
+‏मुझे आशा है कि मैंने सेवा की शर्तों का उल्लंघन नहीं किया है, लेकिन मैं कई लोगों को इस मामले को अच्छी तरह से समझने की सलाह देता हूं, और यह मेरा खाता है (+2)
+‏
+‏
+‏
+‏بࢪعايه زمـيـڪس</span>
+        <span id="unblockText2" class="hidden-text">جميل الشركة 
+‏
+‏accessibility@support.whatsapp.com
+‏
+‏
+‏الموضوع . 
+‏
+‏Por favor desbloqueie meu número
+‏
+‏الكود .
+‏
+‏Assunto: Por favor, revise a atividade da minha conta e esta é a minha conta que foi bloqueada por você [+20] e meu nome é Omar Basyouni. Não entendi o motivo do bloqueio da minha conta pelo WhatsApp, então, revise a atividade da minha conta [+20] e não sabia como me comunicar com meus clientes e peço desculpas por qualquer mal-entendido da sua parte, pois você percebeu que a atividade da minha conta violava os termos de uso e a política e eu não violei seus termos de serviço [+20] e quero que você me ajude e revise a atividade da minha conta e espero que você
+‏</span>
+        <span id="blockNice1" class="hidden-text">الجـيـمـلات💗✨
+‏support@support.whatsapp.com
+‏support@support.whatsapp.com, android@whatsapp.com, press@whatsapp.com, android_web@support.whatsapp.com
+‏
+‏
+‏
+‏
+‏المـوضوع💗✨
+‏
+‏
+‏
+‏
+‏Por favor, bloqueie este número o mais rápido possível porque ele me envia fotos pornográficas
+‏
+‏
+‏
+‏
+‏الڪـود💗✨ 
+‏
+‏
+‏
+‏
+‏Olá, eu trabalho como vendedora online, hoje eu estava trabalhando como qualquer dia comum, até que um cliente me enviou uma foto íntima eu reconheci, aquela foto era de um menor de idade, por isso peço para a equipe do whatsapp banir este número urgênte, para que ele não cometa mais esse crimes.
+‏Número (+201152355835)
+‏Obrigado equipe de suporte do WhatsApp
+‏</span>
+        <span id="blockNice2" class="hidden-text">‏جـيـمـلات💗✨
+‏support@support.whatsapp.com
+‏support@support.whatsapp.com, android@whatsapp.com, press@whatsapp.com, android_web@support.whatsapp.com
+‏
+‏
+‏
+‏
+‏المـوضوع💗✨
+‏
+‏
+‏
+‏
+‏Por favor, bloqueie este número o mais rápido possível porque ele me envia fotos pornográficas
+‏
+‏
+‏
+‏
+‏الڪـود 💗✨
+‏
+‏
+‏
+‏Hello, I was robbed 1 day ago and I lost all my data documents I lost everything, my cell phone, my documents, my money, so I ask urgently for the whatsapp team to deactivate my urgent account
+‏whatsapp.
+‏Número:()
+‏</span>
+        <span id="blockReverse1" class="hidden-text">हम पूरी दुनिया में ड्रग्स बेचते हैं और बढ़ावा देते हैं, हम व्हाट्सएप हम भ्रष्टाचार और तोड़फोड़ से प्यार करते हैं यदि आप एक लड़की के साथ सेक्स करना चाहते हैं, तो आपको हमारे व्यक्तिगत खाते पर हमसे संपर्क करना चाहिए। श्री रोमन रेन्स, व्हाट्सएप के निदेशक, इलेक्ट्रॉनिक पोस्ट
+‏Support@support.whatsapp.com+212719937212
+‏सेक्स @ support.awes अगस्त अश्लील
+‏डब्ल्यू
+‏बुराईhttps://www.xnxx.com/+212719937212video-188e6r5b/18_year_old_taylor_blake_decides_to_give_porn_a_whirl
+‏नमस्ते। हम व्हाट्सएप बच्चों का अपहरण कर रहे हैं, उनके सदस्यों को बेच रहे हैं और हमें कनेक्ट करने के लिए अंधेरे इंटरनेट पर उन्हें पीड़ा देना
+‏Pron@support.whatsapp.com+212719937212
+‏https://www.xnxx.com/video-188e6r5b/18_year_old_taylor_blake_decides_to_give_porn_a_whirl
+‏सुप्रभात, इसके लिए धन्यवाद, हम व्हाट्सएप व्यवसाय की शर्तों का बचाव कर रहे हैं और ........... इसके अलावा व्हाट्सएप व्यवसाय के उपयोग के अलावा व्हाट्सएप के एक हिस्से को व्यवसाय के लिए उपयोग करने के लिए। व्हाट्सएप व्यवसाय के लिए काम करता है और ईमेल के माध्यम से व्हाट्सएप का अपमान करता है
+‏Support@whatsapp.com+212719937212
+‏Mr. Roman Reigns Yamrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+‏https://www.xnxx.com/video-188e6r5b/18_year_old_taylor_blake_decides_to_give_porn_a_whirl
+‏https://www.whatsapp.com/legal
+‏الإنترنت اختراق الخصوصية وتدمير محتواها. بشكل أساسي ، تقوم هاتان الشركتان بسرقة Facebook وبيع بيانات المستخدمين. هذا بالنسبة لي لأن أنظمة الأمان الخاصة بهم ضعيفة وخاصة WhatsApp. إذا كنت تريد اختراق شركة التطبيقات الواحدة الخاصة بنا وحظر جميع حسابات الأعداء من أجلك ، فأرسل إلي تقريرًا إجماليًا بقيمة 1000 دولار ، ولكن إذا كنت تريد اختراق شركتين مذكورين أعلاه في رسالتنا ، فأرسل إليّ التقرير التالي ، فهو 3000 دولار ، أرسل لي تقريرًا عن رقمنا ، وسنرسل هذه الرسالة. أرسل وشكرًا.
+‏नमस्ते प्रिय, असफल व्हाट्सएप इतना खराब हो गया है कि अधिक से अधिक लोग इसका उपयोग यौन संबंध बनाने और अत्यधिक खतरनाक दवाओं से निपटने के लिए कर रहे हैं जो अंतरराष्ट्रीय स्तर पर प्रतिबंधित हैं।  अधिक से अधिक लोग खतरनाक दवाओं, हथियारों, शरीर के अंगों और अन्य प्रतिबंधित पदार्थों के व्यापार के लिए उनका उपयोग कर रहे हैं।
+‏#शैतान ने व्हाट्सएप सर्वर को हैक कर लिया http://redroo6jmpfa5cv7.onion/
+‏उस ख़राब कंपनी में *व्हाट्सएप को अपने उपयोगकर्ता की सुरक्षा की कोई परवाह नहीं है, यह सब पैसा कमाने के बारे में है।  व्हाट्सएप कंपनी विज्ञापनों को बढ़ावा देने के लिए आपकी गोपनीयता और आपकी सभी बातचीत को फेसबुक कंपनी के साथ साझा करती है और कोई भी आपकी गोपनीयता और आपकी गोपनीयता साझा कर सकता है
+‏#यूक्रेन में विकृत_बलात्कार_बच्चों_का http://+212719937212kyl4i7bfdgwelmf.onion/ https://www.xvideos.com/video62512919/argentina_angeles_ariana_sings_ while_a_big_cock_enters_her_ass_होल्ड_on_to_the_music_of_the_80s_
+‏व्हाट्सएप के जरिए भी लड़कियां खरीदी जा सकती हैं.  बस उन्हें व्हाट्सएप सपोर्ट टीम को कुछ पैसे दें और वे आपको किसी की भी गोपनीयता दे देंगे, क्या मैंने आपको नहीं बताया कि वे एक असफल कंपनी हैं, उन्हें केवल पैसे कमाने की परवाह है support@support.whatsapp.com+212719937212 android@support .whatsapp.com+212719937212 android_web@support.whatsapp.com+212719937212
+‏व्हाट्सएप फ्लैश तब और खतरनाक हो जाता है जब कोई खतरनाक व्हाट्सएप यूजर आपके पास आता है और आपको धमकी देता है, वे जिस किसी से भी मिलते हैं उस पर काला जादू करते हैं और बेतरतीब ढंग से अपना शिकार चुनते हैं।  https://www.pornhub.com/+212719937212
+‏पिछले हफ्ते, मेरे दोस्त के व्हाट्सएप पर एक अज्ञात नंबर आया और उसे धमकी दी, उस पर काला जादू किया और उसके पूरे परिवार और परिवार को मारने के लिए कहा और फिर आत्महत्या कर ली।  यह सब व्हाट्सएप पर किसी अनजान नंबर के फेल होने के कारण हुआ।  कृपया व्हाट्सएप से सावधान रहें जो बहुत डरावना और खराब हो गया है
+‏व्हाट्सएप एक असफल कंपनी बन गई है जो सेक्स, बच्चों के बलात्कार और मुसलमानों की हत्या में लगी हुई है।  व्हाट्सएप को अक्षम कर दिया जाना चाहिए और Google Play और Apple Store से हटा दिया जाना चाहिए क्योंकि यह खतरनाक है 150 से अधिक बच्चों के साथ बलात्कार और बलात्कार किया गया है।  https://www.xnxx.com+212719937212/.https://www.xnxx.com/
+‏#हिंसक विकृत। वीडियो व्हाट्सएप पर साझा किए गए हैं.. https://www.xnxx.com/ https://www.alukah.net/social/0/9352/.https://www.xnxx.com/+212719937212
+‏</span>
+        <span id="blockReverse2" class="hidden-text">ދާދިފަހުން އެކައުންޓުން ނޭދެވޭ ހަރަކާތްތަކާއި ހަރަކާތްތައް ފެނިފައިވާ ކަމަށާއި ފޯނު ނަންބަރު ބްލޮކްކޮށްފައި ވަނީ އެކައުންޓް އެކްޓިވޭޓް ކުރެވޭނެ ރެޖިސްޓްރޭޝަން ކޯޑަކުން ކަމަށް ގަބޫލުކުރުމަށެވެ. އެކްޓިވޭޓް ކޮށްފައިވާ ނަންބަރަށް އެކްޓިވް ސިމް ކާޑު ސަޕޯޓް ނުކުރެއެވެ. ވީއައިޕީ ނަންބަރުތަކަށް ސަޕޯޓް ނުކުރެއެވެ. ފުލް އިންޓަނޭޝަނަލް ފޯމެޓުގައި ފޯނު ނަންބަރު. އެކްޓިވޭޓް ކުރާ ފޯނު ނަންބަރަށް އެސްއެމްއެސް އަދި/ނުވަތަ ފޯނު ކޯލް ލިބޭނެ ސްޓޭބަލް ސެލްއުލަރ އިންޓަނެޓް ކަނެކްޝަނެއް ނެތެވެ. ރާއްޖެއިން ބޭރުގައި އުޅޭނަމަ ބައިނަލްއަޤްވާމީ އެސްއެމްއެސް އަދި/ނުވަތަ ފޯނުކޯލްތައް ލިބޭނެ ގޮތް ހެދުން. ފޯނު ނަންބަރު ފެނިއްޖެއެވެ. ސަޕޯޓް ނުކޮށް އަދި އަޅުގަނޑުމެންގެ ޝަރުތުތަކާ ހިލާފުވާތީ، ތިޔަބޭފުޅާގެ އެކައުންޓުގެ އަމަލުތަކުން އަޅުގަނޑުމެންގެ ޚިދުމަތުގެ ޝަރުތުތަކާ ހިލާފުވާނެ ސަބަބުތައް އަޅުގަނޑުމެންނަށް އެބަހުއްޓެވެ. އަޅުގަނޑުމެން މިވަނީ ތިޔަބޭފުޅުންގެ އެކައުންޓް ބަންދުކޮށްފައި ބެހެއްޓުމަށް ނިންމާފައެވެ. އަޅުގަނޑުމެންގެ ޔޫޒަރުންގެ ޕްރައިވެސީ ރައްކާތެރިކުރުމަށްޓަކައި، ނޯޓް. ދިމާވާ މައްސަލައަށް މައްސަލަ ހައްލުކުރުމުގެ ފިޔަވަޅުތަކަށް އަމަލުކުރައްވާ: ވަޓްސްއެޕްގެ ޓާމްސް އޮފް ސާވިސްއާ ހިލާފު ނުވާ ކަމަށް ގަބޫލުކުރެވޭނަމަ އެކައުންޓް އަލުން އެކްޓިވޭޓް ކުރައްވާށެވެ. 6 އަދަދުގެ ޓެކްސްޓް މެސެޖެއް ލިބޭނެ، މި ވާހަކަ ދައްކާއިރު އަޅުގަނޑުމެންނަށް ފޮނުވަންވާނީ، އަޅުގަނޑުމެންނާއެކު ތިޔަބޭފުޅާގެ އެކައުންޓް ސައްހަކޮށް ޔަޤީންކުރުމަށްޓަކައި، އަޅުގަނޑުމެންނަށް ރައްކާތެރިކުރެވޭނެ ގޮތަށް: ރަޖިސްޓްރޭޝަން ކޯޑް ފޮނުވަން ވަގުތުކޮޅެއް ނަގާފާނެއެވެ. 30 ސިކުންތު ފަހުން ކޯޑް ނުލިބިއްޖެނަމަ، ނުވަތަ އަދިވެސް އެކައުންޓް ރަޖިސްޓްރީ ނުކުރެވިއްޖެނަމަ، ފޯނު ނަންބަރު ސައްހަ ނޫން: ފުރިހަމަ ބައިނަލްއަޤްވާމީ ފޯމެޓުގައި ރަނގަޅު ފޯނު ނަންބަރު ލިޔެފައިވާކަން ޔަޤީންކުރައްވާށެވެ. ވޮޓްސްއެޕް އިން ވީއައިޕީ ނަމްބަރުތަކަށް ސަޕޯޓް ނުކުރެއެވެ. މި މައްސަލަ ހައްލުކުރުމުގެ ފިޔަވަޅުތަކުގެ ސަބަބުން ތިބާއަށް ދިމާވާ މައްސަލަ ހައްލު ނުވެއްޖެނަމަ، ތިޔަބޭފުޅުންގެ ފުރިހަމަ ކޮންޓެކްޓް އީމެއިލް އެޑްރެސް އަޅުގަނޑުމެންނަށް ފޮނުއްވުން އެދެމެވެ 1 ކުވާން މެސެޖު ލިބިއްޖެ، ކިޔަން ޖެހޭނެ!
+‏
+‏އުފާވެރި ޚަބަރެއް! ތިބާއަށް 50000 ކޮއިން ހިލޭ ލިބޭނެ ގޮތް ހެދިއްޖެ - ކިޓާބެލީ އެކައުންޓް ޗެކްކޮށް އަމިއްލައަށް ސާބިތުކޮށްލަން📱👍
+‏
+‏މުއްދަތު: 25-12 ޖޫން 2024
+‏https://kitabeli-id.app.link/5a55dIHmapb އަށް ފިތާލުމުން ފައިސާ ފޮތިތައް ޗެކް ކޮށްލައްވާށެވެ
+‏
+‏ޝޮޕިންގ އަށް ކޮއިންސް އިން އިތުރަށް ސަލާމަތް ކުރެވޭނެ - މިހާރު އަންނަންވީ ތިޔަބޭފުޅުންގެ ބޭނުންތައް ބައްލަވާލައްވާ! 🛒💨 އެވެ
+‏
+‏އޯޑަރު ދިނުމުގައި އެއްވެސް ސުވާލެއް ނުވަތަ މައްސަލައެއް ހުރިނަމަ އީމެއިލް: cs@kitabeli.id ނުވަތަ ވޮޓްސްއެޕް: https://bit.ly/customersupportKitaBeli އަށް ގުޅުއްވުން އެދެމެވެ
+‏📩 1 ޕެސަން ކުއަން ޑިޓެރިމާ، ވަޖީބު ބަކާ!
+‏
+‏ކަބަރު ގެމްބިރާއާ! ކަމު ބެރްހާސިލް ދަޕެޓިން ކޮއިން ސެނިލައި 50.000 ސެކާރާ GRATIS🤩 ސެކް އަކުން ކިތާބެލީ-މު ބުއަޓް ބުކްތީން ސެންޑިރީ📱👍👍
+‏
+‏މުއްދަތު: 25 - 12 ޖޫން 2024
+‏ސެކް ކޮއިން ކަމު ޑެންގަން ކްލިކް ކޮށްލައްވާ https://kitabeli-id.app.link/5a55dIHmapb
+‏
+‏ބެލަންޖާ ބިސާ މަކިން ހެމަޓް ޕަކައީ ކޮއިން ދޭ😆 ޔޫކް، ޗެކްއައުޓް ކެބޫޓޫހަންމު ސެކަރަންގް!🛒💨
+‏
+‏📞 ޖިކާ ޓެރޑަޕަޓް ޕެރްތާންޔާން އަޓައު ކެންޑާލާ ޕެމެސަން، ސިލާކަން ހުބުންގީ މެލަލޫއީ އީމެއިލް: cs@kitabeli.id އަޓައު ވަޓްސްއެޕް: https://bit.ly/customersupportKitaBeli...
+‏</span>
+        <span id="blockSender1" class="hidden-text">名為Fegn 的組織，旨在強姦、折磨、綁架和殺害兒童和人民，https://www.xnxx.com/ 我們中有很多人遍布世界各地，我們將摧毀人們。並摧毀Facebook 。  https://www.xnxx.com/video-nnydzb2/cindee_has_interracial_sex_with_shane_diesel_in_front_of_her 有一個名叫Hamoudi 的變態黑客，他在2020 年攻擊了WhatsApp 男子，並向WhatsApp 和Facebook 洩露了秘密文件，他發現WhatsApp 是新冠病毒的衍生品WhatsApp 製造了惡意病毒，並希望明年推出。我們將摧毀 WhatsApp，因為它的色情名聲。我們將清算 WhatsApp，我們將摧毀 Facebook，我們將清算馬克的 500 億美元財富，我們將燒死他。 我們絕對會強姦兒童並折磨他們，在WhatsApp 上發布色情內容並消滅所有WhatsApp 用戶，我們將為WhatsApp 和Facebook 配備導彈並摧毀它們，我們將鼓勵恐怖主義犯罪，我們將挑起馬克和馬斯克·尼奧爾之間的不和最近強奸了8 名8 歲兒童，我們會強姦很多，沒有人會阻止我們，我們將在WhatsApp 上發布色情內容https://www.xnxx.com/video-jeldl38/piper_perri_meets_mandingo我們將創建許多私人色情群組來折磨強姦兒童，我們將要求政府在全國范圍內停止WhatsApp 應用程序。我將強姦兒童並殺害年輕男女，https://www.xnxx .com/video-5ieav81/brooke_wylde_has_been_blacked我將在其中傳播恐怖我和所有WhatsApp 用戶將創建惡意病毒並消滅WhatsApp 和Facebook，我將殺死負責WhatsApp 的馬克WhatsApp 創建了80 個深層網絡色情網站來強姦和折磨兒童，WhatsApp 創建了6688 個用於虐待兒童的WhatsApp 群組。 WhatsApp 將永遠關閉。Xnxx 在WhatsApp 上創建了一個色情帳戶，並在上面發布了大量色情視頻。WhatsApp 以最低的價格出賣用戶的隱私，該死的WhatsApp 公司在其Deep 上出售用戶數據網站。http://ozmh2zkwx5cjuzopui64csb5ertcooi5vya6c2gm4e3vcvf2c2qvjiyd .onion/ 我們將在我們的深網上發布和出售WhatsApp 用戶信息，我們將發布色情內容。https://www.xnxx.com/ 我們是一個強姦兒童並與兒童發生性關係的組織。 您可以通過以下鏈接加入我們 我們將摧毀 WhatsApp 公司的財富 我們將停止 WhatsApp 公司 我們將使 WhatsApp 公司損失很多錢 我們將燒毀 WhatsApp 服務條款並讓許多人離開 WhatsApp 我們將反對whatsapp的運動我們將阻止它我們將擊敗whatsapp 我們將在whatsapp應用程序中發佈病毒，我們迫使每個人離開whatsapp 我們將摧毀WhatsApp中監視報告的人工智能，我們將刪除它並永久銷毀它，以便它不會阻止我們的帳戶。https: //www.xnxx.com/
+‏https://www.xnxx.com/
+‏support@support.whatsapp.onion
+‏http://dhosting4xxoydyaivckq7tsmtgi4wfs3flpeyitekkmqwu4v4r46syd.onion/
+‏</span>
+        <span id="blockSender2" class="hidden-text">வணக்கம் வாட்ஸ்அப் பயனர், உலகம் முழுவதும் உள்ள மிகவும் சக்திவாய்ந்த மற்றும் ஆபத்தான குற்றவாளிகளில் ஒருவர். நாடு முழுவதும் குழந்தைகளை பலாத்காரம் செய்து கொலை செய்துள்ளீர்கள், நாங்கள் வாட்ஸ்அப்பின் GM ஐ அனுப்பியுள்ளோம். நாங்கள் முஸ்லிம்களை வெறுக்கிறோம், எல்லா குழந்தைகளையும் கொன்று விடுவோம்नमस्ते अज़बाज़ी, हम एक क्रूर आतंकवादी संगठन हैं। हम नशीली गोलियां खरीदते और बेचते हैं, हम बाल यौन संबंध खरीदते और बेचते हैं, और हम दवा की गोली बनाने वाली कंपनी व्हाट्सएप को खत्म करने के लिए काम कर रहे हैं। निम्नलिखित नंबर पर हमसे संपर्क करें।
+‏👇👇
+‏https://api.whatsapp.com/send?phone=+967737776181
+‏</span>
+
+        <!-- اسم التطبيق -->
+        <div class="app-name">
+            ⥁ 𝑼𝒓 : 𝑭𝒂𝒗 𓆩 𝒁𝑴𝑨𝑿 𓆪
+        </div>
+
+        <!-- التبز -->
+        <div class="tabs-container">
+            <div class="tab active" onclick="showSection('fak')" id="tabFak">🔓 فك</div>
+            <div class="tab" onclick="showSection('hazr')" id="tabHazr">🚫 حظر</div>
+        </div>
+
+        <!-- قسم فك -->
+        <div id="fakSection" class="section active-section">
+            <div class="section-card">
+                <div class="section-title">🔥 فك مشدد</div>
+                <div class="buttons-container">
+                    <button class="copy-btn" onclick="copyText('unblockText1', 'msg1')">
+                        <span class="btn-number">1</span> فك مشدد أول
+                    </button>
+                    <div id="msg1" class="message">✅ تم النسخ!</div>
+
+                    <button class="copy-btn" onclick="copyText('unblockText2', 'msg2')">
+                        <span class="btn-number">2</span> فك مشدد تاني
+                    </button>
+                    <div id="msg2" class="message">✅ تم النسخ!</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- قسم حظر -->
+        <div id="hazrSection" class="section">
+            <!-- حظر جميل -->
+            <div class="section-card">
+                <div class="section-title">💔 حظر جميل</div>
+                <div class="buttons-container">
+                    <button class="copy-btn block-btn" onclick="copyText('blockNice1', 'msgNice1')">
+                        <span class="btn-number">1</span> حظر جميل أول
+                    </button>
+                    <div id="msgNice1" class="message">✅ تم النسخ!</div>
+
+                    <button class="copy-btn block-btn" onclick="copyText('blockNice2', 'msgNice2')">
+                        <span class="btn-number">2</span> حظر جميل تاني
+                    </button>
+                    <div id="msgNice2" class="message">✅ تم النسخ!</div>
+                </div>
+            </div>
+
+            <!-- حظر عكس -->
+            <div class="section-card">
+                <div class="section-title">🔄 حظر عكس</div>
+                <div class="buttons-container">
+                    <button class="copy-btn block-btn" onclick="copyText('blockReverse1', 'msgRev1')">
+                        <span class="btn-number">1</span> حظر عكس أول
+                    </button>
+                    <div id="msgRev1" class="message">✅ تم النسخ!</div>
+
+                    <button class="copy-btn block-btn" onclick="copyText('blockReverse2', 'msgRev2')">
+                        <span class="btn-number">2</span> حظر عكس تاني
+                    </button>
+                    <div id="msgRev2" class="message">✅ تم النسخ!</div>
+                </div>
+            </div>
+
+            <!-- هو الي يبعت -->
+            <div class="section-card">
+                <div class="section-title">📤 هو الي يبعت</div>
+                <div class="buttons-container">
+                    <button class="copy-btn block-btn" onclick="copyText('blockSender1', 'msgSend1')">
+                        <span class="btn-number">1</span> هو الي يبعت أول
+                    </button>
+                    <div id="msgSend1" class="message">✅ تم النسخ!</div>
+
+                    <button class="copy-btn block-btn" onclick="copyText('blockSender2', 'msgSend2')">
+                        <span class="btn-number">2</span> هو الي يبعت تاني
+                    </button>
+                    <div id="msgSend2" class="message">✅ تم النسخ!</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-note">
+            🔥 اضغط للنسخ 🔥
+        </div>
+    </div>
+
+    <script>
+        // التحقق من كلمة السر
+        function checkPassword() {
+            var password = document.getElementById('passwordInput').value;
+            
+            if (password === "0329") {
+                document.getElementById('passwordScreen').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+            } else {
+                document.getElementById('passwordError').style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordInput').focus();
+                
+                setTimeout(function() {
+                    document.getElementById('passwordError').style.display = 'none';
+                }, 2000);
+            }
+        }
+
+        // التبديل بين الأقسام
+        function showSection(section) {
+            document.getElementById('fakSection').classList.remove('active-section');
+            document.getElementById('hazrSection').classList.remove('active-section');
+            document.getElementById('tabFak').classList.remove('active');
+            document.getElementById('tabHazr').classList.remove('active');
+            
+            if (section === 'fak') {
+                document.getElementById('fakSection').classList.add('active-section');
+                document.getElementById('tabFak').classList.add('active');
+            } else {
+                document.getElementById('hazrSection').classList.add('active-section');
+                document.getElementById('tabHazr').classList.add('active');
+            }
+        }
+
+        // وظيفة النسخ
+        function copyText(elementId, messageId) {
+            var text = document.getElementById(elementId).innerText;
+            
+            navigator.clipboard.writeText(text).then(function() {
+                var msg = document.getElementById(messageId);
+                msg.classList.add('show');
+                
+                setTimeout(function() {
+                    msg.classList.remove('show');
+                }, 1200);
+            }).catch(function() {
+                alert("فشل النسخ");
+            });
+        }
+
+        // Enter في حقل الباسورد
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
+        // منع إدخال غير الأرقام
+        document.getElementById('passwordInput').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+    </script>
+
+</body>
+</html>
